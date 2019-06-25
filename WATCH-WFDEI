@@ -1,0 +1,238 @@
+## Extraction WATCH data
+
+PPFD <- function(Input_lat,Input_lon) {
+  
+  library(ncdf4)
+  
+  setwd("/Data/watch_wfdei/SWdown_daily/")
+  NameNR=dir()  
+  
+  
+  ## SW down
+  
+  Number_i=which(grepl("SWdown_daily_WFDEI",NameNR))
+  
+  NameNR[Number_i]
+  
+  for (i in (1:length(Number_i))){
+    mycdf =nc_open(NameNR[Number_i[i]])
+    
+    day <- ncvar_get(mycdf,'day')+1-min(ncvar_get(mycdf,'day'))
+    year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-8, nchar(NameNR[Number_i[i]])-5)
+    year=as.numeric(year)
+    year=rep(year,length(day))
+
+    lat <- ncvar_get(mycdf,'lat')
+    long <- ncvar_get(mycdf,'lon')
+    
+    ilat=which.min(abs(lat - Input_lat))
+    ilon=which.min(abs(long - Input_lon))
+    
+    if (i==1) {
+      WATCHdata <- (ncvar_get(mycdf,'SWdown',start=c(ilon,ilat,1),count=c(1,1,-1))) 
+      WATCHday=day
+      WATCHyear=year
+    } else {
+      WATCHdata=c(WATCHdata,(ncvar_get(mycdf,'SWdown',start=c(ilon,ilat,1),count=c(1,1,-1))))
+      WATCHday=c(WATCHday,day)
+      WATCHyear=c(WATCHyear,year)      
+    }
+    
+    # WATCHdata <- (ncvar_get(mycdf,'SWdown',start=c(ilon,ilat,1),count=c(1,1,-1))) 
+    nc_close(mycdf)
+  }
+  
+  PPFD<-cbind(WATCHyear,WATCHday,WATCHdata)
+  
+}
+
+
+Tair <- function(Input_lat,Input_lon) {
+  
+  library(ncdf4)
+  
+  setwd("/Users/alienorlavergne/Desktop/Data/watch_wfdei/Tair_daily/")
+  NameNR=dir()  
+  
+  
+  ## Tair
+  
+  Number_i=which(grepl("Tair_daily_WFDEI",NameNR))
+  
+  NameNR[Number_i]
+  
+  for (i in (1:length(Number_i))){
+    mycdf =nc_open(NameNR[Number_i[i]])
+    
+    day <- ncvar_get(mycdf,'day')+1-min(ncvar_get(mycdf,'day'))
+    year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-8, nchar(NameNR[Number_i[i]])-5)
+    year=as.numeric(year)
+    year=rep(year,length(day))
+
+    lat <- ncvar_get(mycdf,'lat')
+    long <- ncvar_get(mycdf,'lon')
+    
+    ilat=which.min(abs(lat - Input_lat))
+    ilon=which.min(abs(long - Input_lon))
+    
+    if (i==1) {
+      WATCHdata <- (ncvar_get(mycdf,'Tair',start=c(ilon,ilat,1),count=c(1,1,-1))) 
+      WATCHday=day
+      WATCHyear=year
+    } else {
+      WATCHdata=c(WATCHdata,(ncvar_get(mycdf,'Tair',start=c(ilon,ilat,1),count=c(1,1,-1))))
+      WATCHday=c(WATCHday,day)
+      WATCHyear=c(WATCHyear,year)      
+    }
+    
+    nc_close(mycdf)
+  }
+  
+  ## Conversion K in C
+  WATCHdata<-WATCHdata-273.15
+  
+  Tair<-cbind(WATCHyear,WATCHday,WATCHdata)
+  
+}
+
+
+Qair <- function(Input_lat,Input_lon) {
+  
+  library(ncdf4)
+  
+  setwd("/Users/alienorlavergne/Desktop/Data/watch_wfdei/Qair_daily/")
+  NameNR=dir()  
+  
+  
+  ## Tair
+  
+  Number_i=which(grepl("Qair_daily_WFDEI",NameNR))
+  
+  NameNR[Number_i]
+  
+  for (i in (1:length(Number_i))){
+    mycdf =nc_open(NameNR[Number_i[i]])
+    
+    day <- ncvar_get(mycdf,'day')+1-min(ncvar_get(mycdf,'day'))
+    year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-8, nchar(NameNR[Number_i[i]])-5)
+    year=as.numeric(year)
+    year=rep(year,length(day))
+
+    lat <- ncvar_get(mycdf,'lat')
+    long <- ncvar_get(mycdf,'lon')
+
+    
+    ilat=which.min(abs(lat - Input_lat))
+    ilon=which.min(abs(long - Input_lon))
+    
+    if (i==1) {
+      WATCHdata <- (ncvar_get(mycdf,'Qair',start=c(ilon,ilat,1),count=c(1,1,-1)))
+      WATCHday=day
+      WATCHyear=year
+    } else {
+      WATCHdata=c(WATCHdata,(ncvar_get(mycdf,'Qair',start=c(ilon,ilat,1),count=c(1,1,-1))))
+      WATCHday=c(WATCHday,day)
+      WATCHyear=c(WATCHyear,year)      
+    }
+    nc_close(mycdf)
+  }
+  
+ 
+  Qair<-cbind(WATCHyear,WATCHday,WATCHdata)
+
+}
+
+
+RainfCRU <- function(Input_lat,Input_lon) {
+
+  library(ncdf4)
+  
+  setwd("/Users/alienorlavergne/Desktop/Data/watch_wfdei/Rainf_daily/")
+  NameNR=dir()  
+  
+  
+  ## Rainf
+  
+  Number_i=which(grepl("Rainf_daily_WFDEI_CRU",NameNR))
+  
+  NameNR[Number_i]
+  
+  for (i in (1:length(Number_i))){
+    mycdf =nc_open(NameNR[Number_i[i]])
+    
+    day <- ncvar_get(mycdf,'day')+1-min(ncvar_get(mycdf,'day'))
+    year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-8, nchar(NameNR[Number_i[i]])-5)
+    year=as.numeric(year)
+    year=rep(year,length(day))
+
+    lat <- ncvar_get(mycdf,'lat')
+    long <- ncvar_get(mycdf,'lon')
+    
+    ilat=which.min(abs(lat - Input_lat))
+    ilon=which.min(abs(long - Input_lon))
+    
+    if (i==1) {
+      WATCHdata <- (ncvar_get(mycdf,'Rainf',start=c(ilon,ilat,1),count=c(1,1,-1)))
+      WATCHday=day
+      WATCHyear=year
+    } else {
+      WATCHdata=c(WATCHdata,(ncvar_get(mycdf,'Rainf',start=c(ilon,ilat,1),count=c(1,1,-1))))
+      WATCHday=c(WATCHday,day)
+      WATCHyear=c(WATCHyear,year)      
+    }
+
+    nc_close(mycdf)
+  }
+  
+  Rainf<-cbind(WATCHyear,WATCHday,WATCHdata)
+
+}
+
+
+RainfGPCC <- function(Input_lat,Input_lon) {
+
+  library(ncdf4)
+  
+  setwd("/Users/alienorlavergne/Desktop/Data/watch_wfdei/Rainf_daily/")
+  NameNR=dir()  
+  
+  
+  ## Rainf
+  
+  Number_i=which(grepl("Rainf_daily_WFDEI_GPCC",NameNR))
+  
+  NameNR[Number_i]
+  
+  for (i in (1:length(Number_i))){
+    mycdf =nc_open(NameNR[Number_i[i]])
+    
+    day <- ncvar_get(mycdf,'day')+1-min(ncvar_get(mycdf,'day'))
+    year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-8, nchar(NameNR[Number_i[i]])-5)
+    year=as.numeric(year)
+    year=rep(year,length(day))
+
+    lat <- ncvar_get(mycdf,'lat')
+    long <- ncvar_get(mycdf,'lon')
+    
+    ilat=which.min(abs(lat - Input_lat))
+    ilon=which.min(abs(long - Input_lon))
+    
+    if (i==1) {
+      WATCHdata <- (ncvar_get(mycdf,'Rainf',start=c(ilon,ilat,1),count=c(1,1,-1))) 
+      WATCHday=day
+      WATCHyear=year
+    } else {
+      WATCHdata=c(WATCHdata,(ncvar_get(mycdf,'Rainf',start=c(ilon,ilat,1),count=c(1,1,-1))))
+      WATCHday=c(WATCHday,day)
+      WATCHyear=c(WATCHyear,year)      
+    }
+    
+
+    nc_close(mycdf)
+  }
+  
+  
+  Rainf<-cbind(WATCHyear,WATCHday,WATCHdata)
+
+}
+
