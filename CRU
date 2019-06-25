@@ -1,0 +1,231 @@
+CRU <- function(Input_lat,Input_lon) {
+
+                  library(ncdf4)
+                  
+setwd("/Data/cru/ts_4.01/")
+NameNR=dir()
+                  
+# Mean temperature
+Number_i=which(grepl("cru_ts4.01.1901.2016.tmp.dat",NameNR))
+                  
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+                  mycdf =nc_open(NameNR[Number_i[i]])
+                  
+                  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+                  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+                  # year=as.numeric(year)
+                  # year=rep(year,length(day))
+                  year<-rep(1901:2016,each=12)
+                  month<-rep(1:12,length(1901:2016))
+                  lat <- ncvar_get(mycdf,'lat')
+                  long <- ncvar_get(mycdf,'lon')
+
+                   ilat=which.min(abs(lat - Input_lat))
+                   ilon=which.min(abs(long - Input_lon))
+
+                    tmpdata <- (ncvar_get(mycdf,'tmp',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+
+                    nc_close(mycdf)
+}
+
+CRU<-list()
+CRU$tmean=cbind(year,month,tmpdata)
+
+
+# Max temperature 
+Number_i=which(grepl("cru_ts4.01.1901.2016.tmx.dat",NameNR))
+
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+  mycdf =nc_open(NameNR[Number_i[i]])
+  
+  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+  # year=as.numeric(year)
+  # year=rep(year,length(day))
+  year<-rep(1901:2016,each=12)
+  month<-rep(1:12,length(1901:2016))
+  lat <- ncvar_get(mycdf,'lat')
+  long <- ncvar_get(mycdf,'lon')
+
+  ilat=which.min(abs(lat - Input_lat))
+  ilon=which.min(abs(long - Input_lon))
+
+  tmxdata <- (ncvar_get(mycdf,'tmx',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+
+  nc_close(mycdf)
+}
+
+CRU$tmax=cbind(year,month,tmxdata)
+
+
+# Min temperature
+Number_i=which(grepl("cru_ts4.01.1901.2016.tmn.dat",NameNR))
+
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+  mycdf =nc_open(NameNR[Number_i[i]])
+  
+  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+  # year=as.numeric(year)
+  # year=rep(year,length(day))
+  year<-rep(1901:2016,each=12)
+  month<-rep(1:12,length(1901:2016))
+  lat <- ncvar_get(mycdf,'lat')
+  long <- ncvar_get(mycdf,'lon')
+
+  ilat=which.min(abs(lat - Input_lat))
+  ilon=which.min(abs(long - Input_lon))
+  #  if (i==1) {
+  tmndata <- (ncvar_get(mycdf,'tmn',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+  
+  #  } else {
+  #    tmxdata=c(harvestdata,(ncvar_get(mycdf,'tmp',start=c(ilon,ilat,1),count=c(1,1,-1))-273.15))
+  #harvestday=c(harvestday,day)
+  #harvestyear=c(harvestyear,year)
+  #  }
+  nc_close(mycdf)
+}
+
+CRU$tmin=cbind(year,month,tmndata)
+
+
+# Diurnal temperature range
+Number_i=which(grepl("cru_ts4.01.1901.2016.dtr.dat",NameNR))
+
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+  mycdf =nc_open(NameNR[Number_i[i]])
+  
+  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+  # year=as.numeric(year)
+  # year=rep(year,length(day))
+  year<-rep(1901:2016,each=12)
+  month<-rep(1:12,length(1901:2016))
+  lat <- ncvar_get(mycdf,'lat')
+  long <- ncvar_get(mycdf,'lon')
+  
+  ilat=which.min(abs(lat - Input_lat))
+  ilon=which.min(abs(long - Input_lon))
+  
+  dtrdata <- (ncvar_get(mycdf,'dtr',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+  
+  nc_close(mycdf)
+}
+
+CRU$dtr=cbind(year,month,dtrdata)
+
+
+# Cloud cover
+Number_i=which(grepl("cru_ts4.01.1901.2016.cld.dat",NameNR))
+
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+  mycdf =nc_open(NameNR[Number_i[i]])
+  
+  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+  # year=as.numeric(year)
+  # year=rep(year,length(day))
+  year<-rep(1901:2016,each=12)
+  month<-rep(1:12,length(1901:2016))
+  lat <- ncvar_get(mycdf,'lat')
+  long <- ncvar_get(mycdf,'lon')
+  
+  ilat=which.min(abs(lat - Input_lat))
+  ilon=which.min(abs(long - Input_lon))
+  
+  clddata <- (ncvar_get(mycdf,'cld',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+  
+  nc_close(mycdf)
+}
+
+CRU$cld=cbind(year,month,clddata)
+
+
+
+# VAP
+Number_i=which(grepl("cru_ts4.01.1901.2016.vap.dat",NameNR))
+
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+  mycdf =nc_open(NameNR[Number_i[i]])
+  
+  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+  # year=as.numeric(year)
+  # year=rep(year,length(day))
+  year<-rep(1901:2016,each=12)
+  month<-rep(1:12,length(1901:2016))
+  lat <- ncvar_get(mycdf,'lat')
+  long <- ncvar_get(mycdf,'lon')
+  time<- cbind(year,month)
+  #tmp<-ncvar_get(mycdf,'tmp')
+  
+  ilat<-Input_lat
+  ilon<-Input_lon
+  ilat=which.min(abs(lat - Input_lat))
+  ilon=which.min(abs(long - Input_lon))
+  #  if (i==1) {
+  vapdata <- (ncvar_get(mycdf,'vap',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+  
+  #  } else {
+  #    tmxdata=c(harvestdata,(ncvar_get(mycdf,'tmp',start=c(ilon,ilat,1),count=c(1,1,-1))-273.15))
+  #harvestday=c(harvestday,day)
+  #harvestyear=c(harvestyear,year)
+  #  }
+  nc_close(mycdf)
+}
+
+CRU$vap=cbind(year,month,vapdata)
+
+
+# PRECIP
+Number_i=which(grepl("cru_ts4.01.1901.2016.pre.dat",NameNR))
+
+NameNR[Number_i]
+
+for (i in (1:length(Number_i))){
+  mycdf =nc_open(NameNR[Number_i[i]])
+  
+  day <- ncvar_get(mycdf,'time')+1-min(ncvar_get(mycdf,'time'))
+  # year=substr(NameNR[Number_i[i]], nchar(NameNR[Number_i[i]])-6, nchar(NameNR[Number_i[i]])-3)
+  # year=as.numeric(year)
+  # year=rep(year,length(day))
+  year<-rep(1901:2016,each=12)
+  month<-rep(1:12,length(1901:2016))
+  lat <- ncvar_get(mycdf,'lat')
+  long <- ncvar_get(mycdf,'lon')
+  time<- cbind(year,month)
+  #tmp<-ncvar_get(mycdf,'tmp')
+  
+  ilat<-Input_lat
+  ilon<-Input_lon
+  ilat=which.min(abs(lat - Input_lat))
+  ilon=which.min(abs(long - Input_lon))
+  #  if (i==1) {
+  predata <- (ncvar_get(mycdf,'pre',start=c(ilon,ilat,1),count=c(1,1,-1))) #cm/day
+  
+  #  } else {
+  #    tmxdata=c(harvestdata,(ncvar_get(mycdf,'tmp',start=c(ilon,ilat,1),count=c(1,1,-1))-273.15))
+  #harvestday=c(harvestday,day)
+  #harvestyear=c(harvestyear,year)
+  #  }
+  nc_close(mycdf)
+}
+
+CRU$pre=cbind(year,month,predata)
+
+
+return(CRU)
+}
+
